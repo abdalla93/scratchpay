@@ -31,7 +31,7 @@ export class ClinicRepository {
     let clinicName = clinic?.name;
     if (!clinic.name) clinicName = clinic.clinicName;
 
-    return name.toUpperCase().includes(name.toUpperCase());
+    return clinicName?.toUpperCase().includes(name.toUpperCase()) || false;
   }
 
   private isValidState (clinic: Clinic, state: string): boolean {
