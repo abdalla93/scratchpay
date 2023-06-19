@@ -51,7 +51,7 @@ This is including search by multiple criteria in the same time
 scratchpay
 ├───src
 │   ├───config # environment variables, swagger config
-│   modules # group related modules together
+│   ├───modules # group related modules together
 │   │   └───module
 │   │       ├───index.ts # exports the things in the module
 │   │       ├───module.controller.ts # controllers called in routes
@@ -60,8 +60,8 @@ scratchpay
 │   │       ├───module.routes.ts # handles incoming traffic
 │   │       └───module.service.ts # business logic between controller and database access
 │   ├───middlewares # global middlewares, used by many routes
-│   └───utils # global utilities, used in many places
 │   ├───constants # global constanst
+│   └───utils # global utilities, used in many places
 └───test # structure mimics src directory structure
 ```
 
