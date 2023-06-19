@@ -25,12 +25,6 @@ Coding Challenge for Clinic Search
 
 - API for getting and searching for clinics
 
-
-
-the API `http://localhost:3000/clinic` will return all clinics
-  
-the API `http://localhost:3000/clinic` will return all clinics
-
 ## Documentation
 
   
