@@ -28,8 +28,10 @@ export class ClinicRepository {
   }
 
   private isValidName (clinic: Clinic, name: string): boolean {
-    if (clinic.name) return clinic.name.toUpperCase().includes(name.toUpperCase());
-    return clinic.clinicName?.toUpperCase().includes(name.toUpperCase()) || false;
+    let clinicName = clinic?.name;
+    if (!clinic.name) clinicName = clinic.clinicName;
+
+    return name.toUpperCase().includes(name.toUpperCase());
   }
 
   private isValidState (clinic: Clinic, state: string): boolean {
@@ -46,8 +48,10 @@ export class ClinicRepository {
   }
 
   private isValidAvailability (clinic: Clinic, availability: ClinicAvailability): boolean {
-    if (clinic.opening) return this.checkWithinTime(availability, clinic.opening);
-    return this.checkWithinTime(availability, clinic.availability);
+    let clinicAvailability = clinic?.opening;
+    if (!clinic.opening) clinicAvailability = clinic.availability;
+
+    return this.checkWithinTime(availability, clinicAvailability);
   }
 
   private checkWithinTime (availabileTime, clinictime): boolean {
