@@ -9,44 +9,48 @@ import { states } from '../../constants/stats';
 @Service()
 export class ClinicRepository {
   public getAll = (query: clinicGetQuery = {}): Clinic[] => {
-    let returnClinics = [...dentalClinics, ...vetClinics] as Clinic[];
-    if (query.name) returnClinics = this.filterName(returnClinics, query.name);
-    if (query.state) returnClinics = this.filterstate(returnClinics, query.state);
-    if (query.availability) returnClinics = this.filterAvailability(returnClinics, query.availability);
-
-    return returnClinics;
+    const returnClinics = [...dentalClinics, ...vetClinics] as Clinic[];
+    return returnClinics.filter(returnClinic => {
+      return this.isValidClinic(returnClinic, query);
+    });
   };
 
-  private filterName (clinics: Clinic[], name: string): Clinic[] {
-    return clinics.filter(clinic => {
-      if (clinic.name) return clinic.name.toUpperCase().includes(name.toUpperCase());
-      return clinic.clinicName?.toUpperCase().includes(name.toUpperCase());
-    });
+  private isValidClinic (clinic: Clinic, query: clinicGetQuery = {}): boolean {
+    let isValidName = true;
+    let isValidState = true;
+    let isValidAvailability = true;
+
+    if (query.name) isValidName = this.isValidName(clinic, query.name);
+    if (query.state) isValidState = this.isValidState(clinic, query.state);
+    if (query.availability) isValidAvailability = this.isValidAvailability(clinic, query.availability);
+
+    return isValidName && isValidState && isValidAvailability;
   }
 
-  private filterstate (clinics: Clinic[], state: string): Clinic[] {
-    return clinics.filter(clinic => {
-      if (clinic?.stateName) {
-        return (
-          clinic.stateName.toUpperCase() === state.toUpperCase() ||
-          getObjectKeyFromValue(states, clinic.stateName)?.toUpperCase() === state.toUpperCase()
-        );
-      }
+  private isValidName (clinic: Clinic, name: string): boolean {
+    if (clinic.name) return clinic.name.toUpperCase().includes(name.toUpperCase());
+    return clinic.clinicName?.toUpperCase().includes(name.toUpperCase()) || false;
+  }
+
+  private isValidState (clinic: Clinic, state: string): boolean {
+    if (clinic?.stateName) {
       return (
-        clinic.stateCode?.toUpperCase() === state.toUpperCase() ||
-        states[clinic.stateCode || '']?.toUpperCase() === state.toUpperCase()
+        clinic.stateName.toUpperCase() === state.toUpperCase() ||
+        getObjectKeyFromValue(states, clinic.stateName)?.toUpperCase() === state.toUpperCase()
       );
-    });
+    }
+    return (
+      clinic.stateCode?.toUpperCase() === state.toUpperCase() ||
+      states[clinic.stateCode || '']?.toUpperCase() === state.toUpperCase()
+    );
   }
 
-  private filterAvailability (clinics: Clinic[], availability: ClinicAvailability): Clinic[] {
-    return clinics.filter(clinic => {
-      if (clinic.opening) return this.checkWithinTime(availability, clinic.opening);
-      return this.checkWithinTime(availability, clinic.availability);
-    });
+  private isValidAvailability (clinic: Clinic, availability: ClinicAvailability): boolean {
+    if (clinic.opening) return this.checkWithinTime(availability, clinic.opening);
+    return this.checkWithinTime(availability, clinic.availability);
   }
 
-  private checkWithinTime (availabileTime, clinictime) {
+  private checkWithinTime (availabileTime, clinictime): boolean {
     return clinictime.from <= availabileTime.from && clinictime.to >= availabileTime.to;
   }
 }
